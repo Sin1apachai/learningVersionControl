@@ -5,7 +5,27 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && electron ."
+    "start": "npm run build && electron .",
+    "pack": "npm run build && electron-builder --mac --publish never"
+  },
+  "build": {
+    "appId": "com.sin1apachai.learningcalculator",
+    "productName": "Learning Calculator",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "index.html",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    }
   },
   "keywords": [],
   "author": "",
@@ -15,6 +35,7 @@
     "@types/node": "^26.6.5",
     "@types/semver": "^7.8.0",
     "electron": "^44.7.2",
+    "electron-builder": "^26.15.3",
     "typescript": "^7.0.2"
   },
   "dependencies": {
