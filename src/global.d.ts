@@ -1,9 +1,15 @@
-interface UpdateCheckResult {
-    currentVersion: string;
-    latestVersion: string;
-    notes: string;
-    available: boolean;
-}
+type UpdateCheckResult =
+    | {
+        ok: true;
+        currentVersion: string;
+        latestVersion: string;
+        available: boolean;
+        notes: string;
+    }
+    | {
+        ok: false;
+        message: string;
+    };
 
 interface Window {
     appInfo: {

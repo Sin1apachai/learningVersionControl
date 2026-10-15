@@ -153,18 +153,25 @@ const updateStatus =
 
 checkUpdateButton.addEventListener("click", async () => {
     checkUpdateButton.disabled = true;
-    updateStatus.textContent = "กำลังตรวจสอบ...";
+    updateStatus.textContent = "กำลังตรวจสอบจาก GitHub...";
 
     try {
         const result = await window.appInfo.checkUpdate();
 
-        updateStatus.textContent = result.available
-            ? `พบเวอร์ชัน ${result.latestVersion}: ${result.notes}`
-            : `คุณใช้เวอร์ชันล่าสุดแล้ว (${result.currentVersion})`;
-    } catch (error) {
-        updateStatus.textContent =
-            "ตรวจสอบไม่สำเร็จ กรุณาตรวจว่าเปิดเซิร์ฟเวอร์อัปเดตแล้ว";
+        if (!result.ok) {
+            updateStatus.textContent = result.message;
+            return;
+        }
 
+        if (result.available) {
+            updateStatus.textContent =
+                `พบเวอร์ชันใหม่ ${result.latestVersion}\n${result.notes}`;
+        } else {
+            updateStatus.textContent =
+                `ไม่มีเวอร์ชันใหม่กว่า ${result.currentVersion}`;
+        }
+    } catch (error) {
+        updateStatus.textContent = "ตรวจสอบอัปเดตไม่สำเร็จ";
         console.error(error);
     } finally {
         checkUpdateButton.disabled = false;

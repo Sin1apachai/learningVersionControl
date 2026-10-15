@@ -17,34 +17,63 @@ function createWindow(): void {
     void window.loadFile(path.join(__dirname, "../index.html"));
 }
 
-ipcMain.handle("app:get-version", () => app.getVersion()); ipcMain.handle("app:check-update", async () => {
-    const response = await fetch(
-        "http://127.0.0.1:3500/latest.json",
-        { signal: AbortSignal.timeout(5000) }
-    );
+ipcMain.handle("app:get-version", () => app.getVersion());
 
-    if (!response.ok) {
-        throw new Error(`Update server returned ${response.status}`);
+ipcMain.handle("app:check-update", async (): Promise<UpdateCheckResult> => {
+    try {
+        const response = await fetch(
+            "https://api.github.com/repos/Sin1apachai/learningVersionControl/releases/latest",
+            {
+                headers: {
+                    Accept: "application/vnd.github+json"
+                },
+                signal: AbortSignal.timeout(10000)
+            }
+        );
+
+        if (response.status === 404) {
+            throw new Error(
+                "ไม่พบ Release กรุณาตรวจว่า Repository เป็น Public และเผยแพร่ Release แล้ว"
+            );
+        }
+
+        if (response.status === 403 || response.status === 429) {
+            throw new Error("GitHub จำกัดการเรียกข้อมูล กรุณาลองใหม่ภายหลัง");
+        }
+
+        if (!response.ok) {
+            throw new Error(`GitHub ตอบกลับสถานะ ${response.status}`);
+        }
+
+        const release = await response.json();
+
+        const latestVersion =
+            typeof release.tag_name === "string"
+                ? semver.valid(release.tag_name)
+                : null;
+
+        if (!latestVersion) {
+            throw new Error("รูปแบบ Tag ไม่ถูกต้อง ควรเป็น เช่น v1.0.0");
+        }
+
+        const currentVersion = app.getVersion();
+
+        return {
+            ok: true,
+            currentVersion,
+            latestVersion,
+            available: semver.gt(latestVersion, currentVersion),
+            notes: typeof release.body === "string" ? release.body : ""
+        };
+    } catch (error) {
+        return {
+            ok: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "ตรวจสอบอัปเดตไม่สำเร็จ"
+        };
     }
-
-    const release = await response.json();
-
-    if (
-        typeof release.version !== "string" ||
-        !semver.valid(release.version) ||
-        typeof release.notes !== "string"
-    ) {
-        throw new Error("Invalid update information");
-    }
-
-    const currentVersion = app.getVersion();
-
-    return {
-        currentVersion,
-        latestVersion: release.version,
-        notes: release.notes,
-        available: semver.gt(release.version, currentVersion)
-    };
 });
 
 app.whenReady().then(() => {
