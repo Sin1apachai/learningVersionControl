@@ -1,0 +1,23 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/semver": "^7.8.0",
+    "electron": "^44.7.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "semver": "^7.8.5"
+  }
+}

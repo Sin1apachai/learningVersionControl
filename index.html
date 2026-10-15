@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #171923;
+            color: white;
+            font-family: system-ui, sans-serif;
+        }
+
+        h1 {
+            font-size: 22px;
+        }
+
+        #display {
+            width: 100%;
+            padding: 20px 12px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            background: #252938;
+            text-align: right;
+            font-size: 32px;
+            overflow-wrap: anywhere;
+        }
+
+        .keys {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        button {
+            padding: 16px 0;
+            border: 0;
+            border-radius: 10px;
+            background: #30364a;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #414a64;
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        .operator {
+            background: #5b47c7;
+        }
+
+        .equals {
+            background: #16765b;
+        }
+
+        .wide {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="version">กำลังอ่านเวอร์ชัน...</p>
+    <button id="check-update" type="button">
+        ตรวจสอบอัปเดต
+    </button>
+
+    <p id="update-status" role="status" aria-live="polite"></p>
+    <h1>เครื่องคิดเลข</h1>
+    <div id="display" role="status" aria-live="polite">0</div>
+
+    <div class="keys">
+        <button class="wide" data-action="clear">C</button>
+        <button data-action="delete">⌫</button>
+        <button class="operator" data-operator="/">÷</button>
+
+        <button data-digit="7">7</button>
+        <button data-digit="8">8</button>
+        <button data-digit="9">9</button>
+        <button class="operator" data-operator="*">×</button>
+
+        <button data-digit="4">4</button>
+        <button data-digit="5">5</button>
+        <button data-digit="6">6</button>
+        <button class="operator" data-operator="-">−</button>
+
+        <button data-digit="1">1</button>
+        <button data-digit="2">2</button>
+        <button data-digit="3">3</button>
+        <button class="operator" data-operator="+">+</button>
+
+        <button class="wide" data-digit="0">0</button>
+        <button data-action="decimal">.</button>
+        <button class="equals" data-action="equals">=</button>
+    </div>
+    <script src="./dist/renderer.js"></script>
+</body>
+
+</html>
